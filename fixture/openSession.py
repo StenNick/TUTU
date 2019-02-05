@@ -9,7 +9,7 @@ class Page:
     def __init__(self, app): # этот модуль вызвали в Application, и ссылаемся на него для вызова драйвера
         self.app = app
 
-    def openPage(self):
+    def openPage(self, url_page):
         wd = self.app.wd # обращаемся к модулую Application
-        wd.get("https://www.tutu.ru/")
+        wd.get(url_page)
 

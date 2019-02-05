@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-from selenium.webdriver.firefox.webdriver import WebDriver
-
-
-# тут у нас сама фикстура, которую мы вызываем в модуле
+from selenium.webdriver.chrome.webdriver import WebDriver # единожды передаем вызов вэбдрайвера и используем его в фикстурах
+from fixture.openSession import Page
+from fixture.findTickets import Tickets
+from fixture.getDate import Date
+from fixture.search import Search
+from fixture.closeSession import Close
+# тут у нас вызываемые фикстуры
 
 class Application:
 
@@ -10,34 +13,20 @@ class Application:
         self.wd = WebDriver()
         self.wd.maximize_window()
         self.wd.implicitly_wait(60)
-
-    def openPage(self):
-        wd = self.wd
-        wd.get("https://www.tutu.ru/")
-
-    def find_teckets(self, city_from, city_to):
-        wd = self.wd
-        wd.find_element_by_class_name("tab_avia").click()
-        wd.find_element_by_name("city_from").clear()
-        wd.find_element_by_name("city_from").send_keys(city_from)
-        wd.find_element_by_name("city_to").clear()
-        wd.find_element_by_name("city_to").send_keys(city_to)
-        # passengers
-        wd.find_element_by_class_name("increase").click()
-
-    def check_date(self, date_from, date_back):
-        wd = self.wd
-        wd.find_element_by_name("date_from").click()
-        wd.find_element_by_name("date_from").send_keys(date_from)
-        wd.find_element_by_name("date_back").click()
-        wd.find_element_by_name("date_back").send_keys(date_back)
-
-    def search(self):
-        wd = self.wd
-        wd.find_element_by_class_name("j-submit_button")
+        self.openSession = Page(self) # тут дали досту к драйверу модулю SessionHelper
+        self.findTickets = Tickets(self)
+        self.getDate = Date(self)
+        self.search = Search(self)
+        self.closeSession = Close(self)
 
 
-    def closeBrowser(self):
-        self.wd.quit()
+"""
+в __init'e__ мы вызываем модули и передаем их как вызов функций из фикстур
+для их вызова мы импортируем модули из папки fixture в наш модуль Application
+каждая фикстура выполняет свою роль, порядок вызова играет роль лишь в модуле test\ test_init_tests.py
+
+"""
+
+
 
 
