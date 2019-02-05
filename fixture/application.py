@@ -2,6 +2,8 @@
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 
+# тут у нас сама фикстура, которую мы вызываем в модуле
+
 class Application:
 
     def __init__(self):
