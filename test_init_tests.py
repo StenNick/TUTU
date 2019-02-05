@@ -1,45 +1,26 @@
 # -*- coding: utf-8 -*-
-from selenium.webdriver.chrome.webdriver import WebDriver
-import time, unittest
-
-
-class test_init_main_test(unittest.TestCase):
-
-    def setUp(self):
-        self.wd = WebDriver()
-        self.wd.implicitly_wait(60)
-        self.wd.maximize_window()
-
-    def test_group(self):
-        wd = self.wd
-        wd.get("https://www.tutu.ru/")
-        wd.find_element_by_class_name("tab_avia").click()
-        time.sleep(1)
-        wd.find_element_by_name("city_from").clear()
-        wd.find_element_by_name("city_from").send_keys("Москва")
-        time.sleep(1)
-        wd.find_element_by_name("city_to").clear()
-        wd.find_element_by_name("city_to").send_keys("Санкт-Петербург")
-        time.sleep(1)
-
-        wd.find_element_by_name("date_from").click()
-        wd.find_element_by_name("date_from").send_keys("25.03.2019")
-        time.sleep(1)
-        wd.find_element_by_name("date_back").click()
-        wd.find_element_by_name("date_back").send_keys("05.05.2019")
+import pytest
+from application import Application
 
 
 
-        # passengers
-        wd.find_element_by_class_name("increase").click()
-
-        # find tickets
-        wd.find_element_by_class_name("j-submit_button")
-
-
-    def tearDown(self):
-        self.wd.quit()
+# создаем фикстуру
+@pytest.fixture # тут мы сказали что создаем фикстуру
+def app(request): # 'request будет принимать свойство закрытия браузера
+    fixture = Application() # ссылаемся на модуль main_fixture с классом Application
+    request.addfinalizer(fixture.closeBrowser) # тут вызываем закрытие браузера
+    return fixture
+    # addfinalizer это свойство фикстуры из либы pytest'a
 
 
-if __name__=='__main__':
-    unittest.main()
+
+def test_group(app): # app это фикстура со всем нужными тестами
+    app.openPage()
+    app.find_teckets(city_from="Мсоква", city_to="Париж")
+    app.check_date(date_from="25.04.2019", date_back="04.05.2019")
+    app.search()
+
+
+def tearDown(app): # вызов идет через фикстуру app ^^
+    app.closeBrowser()
+
